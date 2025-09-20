@@ -8,10 +8,11 @@
     @viteReactRefresh()
     @inertiaHead()
     @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
-  </head>
+    @routes()
+    </head>
 
-  <body class="min-h-screen w-screen font-sans">
-    @inertia()
-  </body>
+    <body class="min-h-screen w-screen font-sans">
+      @inertia()
+    </body>
 
-</html>
+  </html>

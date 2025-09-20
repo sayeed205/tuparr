@@ -5,9 +5,7 @@
     "outDir": "./build",
     "baseUrl": "./",
     "paths": {
-      "~/*": [
-        "./inertia/*"
-      ]
+      "~/*": ["./inertia/*"]
     }
   },
   "exclude": ["./inertia/**/*", "node_modules", "build"]
