@@ -43,7 +43,7 @@ export default class AuthController {
       if (next) {
         return response.redirect(next)
       }
-      return response.redirect(router.builder().make('home'))
+      return response.redirect(router.builder().make('app.dashboard.page'))
     } catch {
       session.flash('errors.auth', 'Invalid credentials')
       return response.redirect(router.builder().make('auth.login.page'))
