@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        @stack('dumper')
-        @viteReactRefresh()
-        @inertiaHead()
-        @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
-    </head>
+    @stack('dumper')
+    @viteReactRefresh()
+    @inertiaHead()
+    @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
+  </head>
 
-    <body class="min-h-screen w-screen font-sans">
-        @inertia()
-    </body>
+  <body class="min-h-screen w-screen font-sans">
+    @inertia()
+  </body>
 
 </html>
