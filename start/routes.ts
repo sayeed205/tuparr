@@ -33,6 +33,7 @@ router
 router
   .group(() => {
     router.get('dashboard', ({ inertia }) => inertia.render('dashboard')).as('dashboard.page')
+    router.get('files', ({ inertia }) => inertia.render('files')).as('files.page')
   })
   .as('app')
   .use(middleware.auth())

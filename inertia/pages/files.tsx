@@ -4,13 +4,13 @@ import AppLayout from '~/components/layout/app-layout'
 import { Header } from '~/components/layout/header'
 import { Main } from '~/components/layout/main'
 
-export default function DashboardPage() {
+export default function FilesPage() {
   return (
     <>
-      <Head title="Dashboard" />
+      <Head title="Files" />
       <AppLayout>
         <Header></Header>
-        <Main>Dashboard here</Main>
+        <Main>Files here</Main>
       </AppLayout>
     </>
   )

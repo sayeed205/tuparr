@@ -1,4 +1,4 @@
-import { CommandIcon, LayoutDashboardIcon } from 'lucide-react'
+import { CloudDownloadIcon, CommandIcon, FilesIcon, LayoutDashboardIcon } from 'lucide-react'
 import React from 'react'
 
 import { NavGroup } from '~/components/layout/nav-group'
@@ -19,8 +19,18 @@ const sidebarLinks: NavGroupType[] = [
     items: [
       {
         icon: LayoutDashboardIcon,
-        title: 'Dahsbord',
+        title: 'Dashboard',
         url: '/dashboard',
+      },
+      {
+        icon: FilesIcon,
+        title: 'Files',
+        url: '/files',
+      },
+      {
+        icon: CloudDownloadIcon,
+        title: 'Transfers',
+        url: '/transfers',
       },
     ],
   },
