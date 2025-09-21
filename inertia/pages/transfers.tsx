@@ -1,14 +1,3 @@
-import React, { useState } from 'react'
-import { Head } from '@inertiajs/react'
-import AppLayout from '~/components/layout/app-layout'
-import { Header } from '~/components/layout/header'
-import { Main } from '~/components/layout/main'
-import { Card, CardTitle } from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { InferPageProps } from '@adonisjs/inertia/types'
-import TransfersController from '#controllers/transfers_controller'
 import {
   ClockIcon,
   DownloadIcon,
@@ -17,6 +6,19 @@ import {
   UploadIcon,
   UsersIcon,
 } from 'lucide-react'
+import React, { useState } from 'react'
+import { Head } from '@inertiajs/react'
+
+import type { InferPageProps } from '@adonisjs/inertia/types'
+import type TransfersController from '#controllers/transfers_controller'
+
+import AppLayout from '~/components/layout/app-layout'
+import { Header } from '~/components/layout/header'
+import { Main } from '~/components/layout/main'
+import { Card, CardTitle } from '~/components/ui/card'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Progress } from '~/components/ui/progress'
@@ -154,6 +156,7 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
       <AppLayout>
         <Header />
         <Main>
+          {/* Transfers List */}
           <div className="space-y-4">
             {transfers.map((transfer) => {
               const progress = calculateProgress(transfer.completedLength, transfer.totalLength)
@@ -168,13 +171,12 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
                 >
                   <div className="space-y-3">
                     {/* Header Row with Status, Speeds, and Connections */}
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-center gap-4">
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={(checked) =>
                           handleSelectTransfer(transfer.gid, checked as boolean)
                         }
-                        className="mt-1"
                       />
 
                       <div className="flex-1 min-w-0">
@@ -190,33 +192,36 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
 
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-1">
-                              <DownloadIcon className="h-3 w-3 text-green-500" />
+                              <DownloadIcon className="h-4 w-4 text-green-500" />
                               <span className="font-medium">
                                 {formatSpeed(transfer.downloadSpeed)}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-1">
-                              <UploadIcon className="h-3 w-3 text-blue-500" />
+                              <UploadIcon className="h-4 w-4 text-blue-500" />
                               <span className="font-medium">
                                 {formatSpeed(transfer.uploadSpeed)}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-1">
-                              <UsersIcon className="h-3 w-3 text-orange-500" />
+                              <UsersIcon className="h-4 w-4 text-orange-500" />
                               <span className="font-medium">{transfer.connections}</span>
                             </div>
 
                             <div className="flex items-center gap-1">
-                              <HardDriveIcon className="h-3 w-3 text-purple-500" />
+                              <HardDriveIcon className="h-4 w-4 text-purple-500" />
                               <span className="font-medium">{transfer.numSeeders}</span>
                             </div>
                           </div>
                         </div>
 
                         <h3 className="font-medium text-foreground text-balance leading-tight mb-3">
-                          {transfer.bittorrent?.info?.name || 'Unknown Transfer'}
+                          {transfer.bittorrent?.info?.name ||
+                            (transfer.files && transfer.files.length > 0
+                              ? transfer.files[0].path
+                              : 'Unknown Transfer')}
                         </h3>
 
                         {/* Progress Bar */}
@@ -237,7 +242,6 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
               )
             })}
           </div>
-
           {transfers.length === 0 && (
             <Card className="p-12 text-center">
               <DownloadIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
