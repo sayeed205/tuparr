@@ -3,6 +3,8 @@ import React from 'react'
 import { cn } from '~/lib/utils'
 import { Separator } from '~/components/ui/separator'
 import { SidebarTrigger } from '~/components/ui/sidebar'
+import { ThemeToggle } from '~/components/theme-toggle'
+import AddTransferModal from '~/components/add-transfer-modal'
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean
@@ -37,6 +39,10 @@ export const Header = ({ className, fixed, children, ...props }: HeaderProps) =>
       <SidebarTrigger variant="outline" className="scale-125 sm:scale-100" />
       <Separator orientation="vertical" className="h-6" />
       {children}
+      <div className="ml-auto flex items-center gap-2">
+        <AddTransferModal />
+        <ThemeToggle />
+      </div>
     </header>
   )
 }

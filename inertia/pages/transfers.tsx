@@ -58,7 +58,9 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
     <>
       <Head title="Transfers" />
       <AppLayout>
-        <Header />
+        <Header fixed>
+          <h3 className="text-3xl">Transfers</h3>
+        </Header>
         <Main>
           {/* Transfers List */}
           <div className="space-y-4">
