@@ -2,6 +2,8 @@ import app from '@adonisjs/core/services/app'
 
 import { type HttpContext } from '@adonisjs/core/http'
 
+import { addTransferValidator } from '#validators/transfers_validator'
+
 export default class TransfersController {
   async index({ inertia }: HttpContext) {
     const aria2 = await app.container.make('aria2')
@@ -19,5 +21,17 @@ export default class TransfersController {
       },
     ])
     return inertia.render('transfers', { transfers: [...active, ...waiting, ...stopped] })
+  }
+
+  async new({ request, response }: HttpContext) {
+    const { links } = await request.validateUsing(addTransferValidator)
+    const aria2 = await app.container.make('aria2')
+    for (const link of links) {
+      try {
+        await aria2.addUri([link])
+      } catch {}
+    }
+
+    return response.redirect('/transfers')
   }
 }

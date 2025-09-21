@@ -33,7 +33,7 @@ export default function LoginPage() {
     <>
       <Head title="Login" />
       <AuthLayout>
-        <Card className="gap-4">
+        <Card className="gap-4 min-w-[30vw]">
           <CardHeader>
             <CardTitle className="text-lg tracking-tight">Login</CardTitle>
             <CardDescription>

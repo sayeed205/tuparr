@@ -1,5 +1,7 @@
+import { useForm } from '@inertiajs/react'
+import { route } from '@izzyjs/route/client'
 import { Plus } from 'lucide-react'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -11,32 +13,40 @@ import {
 } from '~/components/ui/dialog'
 import { Textarea } from '~/components/ui/textarea'
 import { Label } from '~/components/ui/label'
+import useError from '~/hooks/use-error'
 
-interface AddTransferModalProps {
-  onAddTransfers?: (links: string[]) => void
-}
-
-export default function AddTransferModal({ onAddTransfers }: AddTransferModalProps) {
+export default function AddTransferModal() {
   const [isOpen, setIsOpen] = useState(false)
-  const [newTransferLinks, setNewTransferLinks] = useState('')
+  const form = useForm({
+    links: [] as string[],
+  })
 
-  const handleAddTransfers = () => {
-    const links = newTransferLinks
+  const errors = useError()
+
+  const handleAddTransfers = (e: FormEvent) => {
+    e.preventDefault()
+    // Convert textarea string to array and update before submit
+    const linksArray = (form.data.links as string[])
+      .join('\n') // If already user-updated, acts as expected, if not, is current.
       .split('\n')
       .map((link) => link.trim())
       .filter((link) => link.length > 0)
 
-    if (links.length > 0) {
-      // Call the callback function if provided
-      onAddTransfers?.(links)
-
-      // For demo purposes, log the links
-      console.log('[v0] Adding new transfers:', links)
-
-      // Reset form and close modal
-      setNewTransferLinks('')
-      setIsOpen(false)
+    if (linksArray.length === 0) {
+      return
     }
+    form.setData('links', linksArray)
+    // Wait for setData: Instead of relying on async update, manually pass data payload directly
+    form.post(route('transfers.new').toString(), {
+      onBefore: () => {
+        form.setData('links', linksArray)
+      },
+      onSuccess: () => {
+        setIsOpen(false)
+        form.setData('links', [])
+        form.reset()
+      },
+    })
   }
 
   return (
@@ -46,13 +56,16 @@ export default function AddTransferModal({ onAddTransfers }: AddTransferModalPro
           <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-[60vw]">
+      <DialogContent className="w-[95vw] sm:max-w-[60vw] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Transfer</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="links">URLs/Magnet Links</Label>
+          <form className="space-y-2" onSubmit={handleAddTransfers}>
+            <Label htmlFor="links">
+              URLs/Magnet Links
+              {errors?.links && <span className="text-xs text-destructive">{errors?.links}</span>}
+            </Label>
             <Textarea
               id="links"
               placeholder="Enter URLs or magnet links (one per line)
@@ -62,19 +75,22 @@ https://example.com/file.zip
 magnet:?xt=urn:btih:...
 ftp://example.com/file.tar.gz
 https://releases.ubuntu.com/22.04/ubuntu-22.04.3-desktop-amd64.iso"
-              value={newTransferLinks}
-              onChange={(e) => setNewTransferLinks(e.target.value)}
-              className="min-h-[60vh] resize-none text-sm"
+              value={(form.data.links as string[]).join('\n')}
+              onChange={(e) => {
+                // Always update form state directly as array
+                form.setData(
+                  'links',
+                  e.target.value.split('\n').map((link) => link.trim())
+                )
+              }}
+              className="w-full resize-none text-sm break-all"
             />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddTransfers} disabled={!newTransferLinks.trim()}>
-              Add Transfers
-            </Button>
-          </div>
+            <div className="flex justify-end gap-2">
+              <Button type="submit" disabled={form.processing}>
+                Add Transfers
+              </Button>
+            </div>
+          </form>
         </div>
       </DialogContent>
     </Dialog>
