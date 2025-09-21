@@ -6,7 +6,7 @@ import {
   UploadIcon,
   UsersIcon,
 } from 'lucide-react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Head } from '@inertiajs/react'
 
 import type { InferPageProps } from '@adonisjs/inertia/types'
@@ -15,110 +15,13 @@ import type TransfersController from '#controllers/transfers_controller'
 import AppLayout from '~/components/layout/app-layout'
 import { Header } from '~/components/layout/header'
 import { Main } from '~/components/layout/main'
-import { Card, CardTitle } from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
+import { Card } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Progress } from '~/components/ui/progress'
 
-function Modal({
-  open,
-  onOpenChange,
-  title,
-  children,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  children: React.ReactNode
-}) {
-  if (!open) return null
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
-      onClick={() => onOpenChange(false)}
-    >
-      <div
-        className="bg-card rounded-xl p-6 min-w-[320px] shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-        style={{ minWidth: 340, maxWidth: 400 }}
-      >
-        <div className="mb-4">
-          <CardTitle>{title}</CardTitle>
-        </div>
-        <div>{children}</div>
-        <Button
-          variant="ghost"
-          className="absolute top-2 right-2 p-1 rounded"
-          aria-label="Close"
-          onClick={() => onOpenChange(false)}
-        >
-          ×
-        </Button>
-      </div>
-    </div>
-  )
-}
-
 export default function TransfersPage({ transfers }: InferPageProps<TransfersController, 'index'>) {
-  // Modal State
-  const [modalOpen, setModalOpen] = useState(false)
   const [selectedTransfers, setSelectedTransfers] = useState<Set<string>>(new Set())
-
-  // New Transfer Modal State
-  const [newLink, setNewLink] = useState('')
-  const [newStatus, setNewStatus] = useState<null | { type: 'success' | 'error'; message: string }>(
-    null
-  )
-  const [newSubmitting, setNewSubmitting] = useState(false)
-
-  // Handle new transfer submit
-  const handleCreateTransfer = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setNewStatus(null)
-    setNewSubmitting(true)
-
-    if (!newLink.trim()) {
-      setNewStatus({ type: 'error', message: 'Please enter a download link.' })
-      setNewSubmitting(false)
-      return
-    }
-    try {
-      const resp = await fetch('/api/transfer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ link: newLink }),
-      })
-      const data = await resp.json()
-      if (data.success) {
-        setNewStatus({
-          type: 'success',
-          message: 'Transfer started successfully.',
-        })
-        setNewLink('')
-        setTimeout(() => {
-          setModalOpen(false)
-          setNewStatus(null)
-        }, 900)
-        // refresh transfers quickly after new submission
-      } else {
-        setNewStatus({
-          type: 'error',
-          message: data.error || 'Failed to start transfer.',
-        })
-      }
-    } catch (err: any) {
-      setNewStatus({
-        type: 'error',
-        message: err?.message || 'Server error / network error.',
-      })
-    }
-    setNewSubmitting(false)
-  }
 
   const handleSelectTransfer = (gid: string, checked: boolean) => {
     const newSelected = new Set(selectedTransfers)
@@ -251,43 +154,6 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
           )}
         </Main>
       </AppLayout>
-      <Modal open={modalOpen} onOpenChange={setModalOpen} title="Add New Transfer">
-        <form className="flex flex-col gap-4" onSubmit={handleCreateTransfer}>
-          <div>
-            <Label htmlFor="new-link">Download Link</Label>
-            <Input
-              id="new-link"
-              type="text"
-              placeholder="Paste your download URL"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              disabled={newSubmitting}
-              className="mt-1"
-              autoFocus
-              autoComplete="off"
-            />
-          </div>
-          {/*
-            // Future options:
-            // For yt-dlp/cookies, add more fields here…
-            // {engine === 'yt-dlp' && (...)
-          */}
-          <Button type="submit" className="w-full" disabled={newSubmitting}>
-            {newSubmitting ? 'Starting...' : 'Add Transfer'}
-          </Button>
-          {newStatus && (
-            <div
-              className={`rounded px-3 py-2 text-sm mt-2 ${
-                newStatus.type === 'success'
-                  ? 'bg-success/20 text-success-foreground'
-                  : 'bg-destructive/10 text-destructive'
-              }`}
-            >
-              {newStatus.message}
-            </div>
-          )}
-        </form>
-      </Modal>
     </>
   )
 }
