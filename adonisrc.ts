@@ -58,6 +58,7 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/inertia/inertia_provider'),
     () => import('@izzyjs/route/izzy_provider'),
+    () => import('#providers/aria2_provider'),
   ],
 
   /*

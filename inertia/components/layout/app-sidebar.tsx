@@ -98,7 +98,7 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
               willChange: 'transform, opacity',
             }}
           >
-            Putarr
+            Tuparr
           </span>
         </div>
       </SidebarHeader>

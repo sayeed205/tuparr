@@ -12,6 +12,7 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 
 const AuthController = () => import('#controllers/auth_controller')
+const TransfersController = () => import('#controllers/transfers_controller')
 
 router.on('/').renderInertia('home').use(middleware.auth())
 
@@ -29,6 +30,19 @@ router
     router.get('logout', [AuthController, 'logout']).as('logout').use(middleware.auth())
   })
   .as('auth')
+
+/*
+|--------------------------------------------------------------------------
+| Transfers Controller
+|--------------------------------------------------------------------------
+*/
+router
+  .group(() => {
+    router.get('/', [TransfersController, 'index']).as('page')
+  })
+  .use(middleware.auth())
+  .as('transfers')
+  .prefix('transfers')
 
 router
   .group(() => {

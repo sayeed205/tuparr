@@ -11,7 +11,7 @@ import '../css/app.css'
 import { TailwindIndicator } from '~/components/tailwind-indicator'
 import { Toaster } from '~/components/ui/sonner'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Putarr'
+const appName = import.meta.env.VITE_APP_NAME || 'Tuparr'
 
 createInertiaApp({
   progress: { color: '#5468FF' },
