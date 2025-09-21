@@ -7,6 +7,8 @@ const inertiaConfig = defineConfig({
    */
   rootView: 'inertia_layout',
 
+  history: { encrypt: true },
+
   /**
    * Data that should be shared with all rendered pages
    */

@@ -7,7 +7,7 @@ import {
   UsersIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { Head } from '@inertiajs/react'
+import { Head, usePoll } from '@inertiajs/react'
 
 import type { InferPageProps } from '@adonisjs/inertia/types'
 import type TransfersController from '#controllers/transfers_controller'
@@ -22,6 +22,7 @@ import { Progress } from '~/components/ui/progress'
 
 export default function TransfersPage({ transfers }: InferPageProps<TransfersController, 'index'>) {
   const [selectedTransfers, setSelectedTransfers] = useState<Set<string>>(new Set())
+  usePoll(1000, { async: true, only: ['transfers'] })
 
   const handleSelectTransfer = (gid: string, checked: boolean) => {
     const newSelected = new Set(selectedTransfers)
