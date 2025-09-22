@@ -24,4 +24,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+
+  DOWNLOAD_DIR: Env.schema.string.optional(),
+  FILES_DIR: Env.schema.string.optional(),
 })

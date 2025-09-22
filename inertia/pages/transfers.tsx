@@ -46,10 +46,7 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
     }
   }
 
-  const handleAction = (
-    action: 'pause' | 'resume' | 'remove',
-    gids?: string[]
-  ) => {
+  const handleAction = (action: 'pause' | 'resume' | 'remove', gids?: string[]) => {
     const GIDs = gids ?? Array.from(selectedTransfers)
     if (GIDs.length === 0) return
 
@@ -205,10 +202,7 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
                         </div>
 
                         <h3 className="font-medium text-foreground text-balance leading-tight mb-3">
-                          {transfer.bittorrent?.info?.name ||
-                            (transfer.files && transfer.files.length > 0
-                              ? transfer.files[0].path
-                              : 'Unknown Transfer')}
+                          {getTransferName(transfer)}
                         </h3>
 
                         {/* Progress Bar */}
@@ -289,4 +283,18 @@ function calculateProgress(completed: string, total: string): number {
   const comp = Number.parseInt(completed)
   const tot = Number.parseInt(total)
   return tot > 0 ? (comp / tot) * 100 : 0
+}
+
+// Utility function
+function getTransferName(transfer: any) {
+  if (transfer.bittorrent?.info?.name) {
+    return transfer.bittorrent.info.name
+  }
+
+  if (transfer.files && transfer.files.length > 0) {
+    const fullPath = transfer.files[0].path
+    return fullPath.split('/').pop() || fullPath // fallback
+  }
+
+  return 'Unknown Transfer'
 }
