@@ -5,3 +5,10 @@ export const addTransferValidator = vine.compile(
     links: vine.array(vine.string()).minLength(1),
   })
 )
+
+export const transfersActionValidator = vine.compile(
+  vine.object({
+    GIDs: vine.array(vine.string()).minLength(1),
+    action: vine.enum(['pause', 'resume', 'remove']),
+  })
+)

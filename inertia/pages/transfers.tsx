@@ -3,11 +3,13 @@ import {
   DownloadIcon,
   HardDriveIcon,
   PauseIcon,
+  PlayIcon,
+  Trash2Icon,
   UploadIcon,
   UsersIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { Head, usePoll } from '@inertiajs/react'
+import { Head, router, usePoll } from '@inertiajs/react'
 
 import type { InferPageProps } from '@adonisjs/inertia/types'
 import type TransfersController from '#controllers/transfers_controller'
@@ -19,6 +21,8 @@ import { Card } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Progress } from '~/components/ui/progress'
+import { Button } from '~/components/ui/button'
+import { route } from '@izzyjs/route/client'
 
 export default function TransfersPage({ transfers }: InferPageProps<TransfersController, 'index'>) {
   const [selectedTransfers, setSelectedTransfers] = useState<Set<string>>(new Set())
@@ -34,25 +38,27 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
     setSelectedTransfers(newSelected)
   }
 
-  // const handleSelectAll = (checked: boolean) => {
-  //   if (checked) {
-  //     setSelectedTransfers(new Set(transfers.map((t) => t.gid)))
-  //   } else {
-  //     setSelectedTransfers(new Set())
-  //   }
-  // }
-  //
-  // const handleRemoveSelected = () => {
-  //   setTransfers(transfers.filter((t) => !selectedTransfers.has(t.gid)))
-  //   setSelectedTransfers(new Set())
-  // }
-  //
-  // const handleCancelSelected = () => {
-  //   setTransfers(
-  //     transfers.map((t) => (selectedTransfers.has(t.gid) ? { ...t, status: 'paused' } : t))
-  //   )
-  //   setSelectedTransfers(new Set())
-  // }
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedTransfers(new Set(transfers.map((t) => t.gid)))
+    } else {
+      setSelectedTransfers(new Set())
+    }
+  }
+
+  const handleAction = (
+    action: 'pause' | 'resume' | 'remove',
+    gids?: string[]
+  ) => {
+    const GIDs = gids ?? Array.from(selectedTransfers)
+    if (GIDs.length === 0) return
+
+    router.post(route('transfers.action'), {
+      GIDs,
+      action,
+    })
+    setSelectedTransfers(new Set())
+  }
 
   return (
     <>
@@ -62,6 +68,81 @@ export default function TransfersPage({ transfers }: InferPageProps<TransfersCon
           <h3 className="text-3xl">Transfers</h3>
         </Header>
         <Main>
+          {/* Controls */}
+          <div className="flex items-center justify-between bg-card p-4 rounded-lg border mb-4">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                checked={selectedTransfers.size === transfers.length && transfers.length > 0}
+                onCheckedChange={handleSelectAll}
+              />
+              <span className="text-sm text-muted-foreground">
+                {selectedTransfers.size > 0 ? `${selectedTransfers.size} selected` : 'Select all'}
+              </span>
+            </div>
+
+            {/* Right side actions */}
+            <div className="flex gap-2">
+              {selectedTransfers.size > 0 ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAction('pause')}
+                    className="gap-1 bg-transparent"
+                  >
+                    <PauseIcon className="h-4 w-4" />
+                    Pause
+                  </Button>
+
+                  {/* Resume only paused in selection */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      handleAction(
+                        'resume',
+                        Array.from(selectedTransfers).filter((gid) =>
+                          transfers.some((t) => t.gid === gid && t.status === 'paused')
+                        )
+                      )
+                    }
+                    className="gap-1 bg-transparent"
+                  >
+                    <PlayIcon className="h-4 w-4" />
+                    Resume
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleAction('remove')}
+                    className="gap-1"
+                  >
+                    <Trash2Icon className="h-4 w-4" />
+                    Remove
+                  </Button>
+                </>
+              ) : (
+                // No selection: show Resume if any paused transfer exists
+                transfers.some((t) => t.status === 'paused') && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      handleAction(
+                        'resume',
+                        transfers.filter((t) => t.status === 'paused').map((t) => t.gid)
+                      )
+                    }
+                    className="gap-1 bg-transparent"
+                  >
+                    <PlayIcon className="h-4 w-4" />
+                    Resume paused
+                  </Button>
+                )
+              )}
+            </div>
+          </div>
           {/* Transfers List */}
           <div className="space-y-4">
             {transfers.map((transfer) => {

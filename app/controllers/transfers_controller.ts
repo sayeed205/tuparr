@@ -2,7 +2,7 @@ import app from '@adonisjs/core/services/app'
 
 import { type HttpContext } from '@adonisjs/core/http'
 
-import { addTransferValidator } from '#validators/transfers_validator'
+import { addTransferValidator, transfersActionValidator } from '#validators/transfers_validator'
 
 export default class TransfersController {
   async index({ inertia }: HttpContext) {
@@ -29,6 +29,31 @@ export default class TransfersController {
     for (const link of links) {
       try {
         await aria2.addUri([link])
+      } catch {}
+    }
+
+    return response.redirect('/transfers')
+  }
+
+  async action({ request, response }: HttpContext) {
+    const { GIDs, action } = await request.validateUsing(transfersActionValidator)
+    console.log(request.all())
+    const aria2 = await app.container.make('aria2')
+
+    for (const gid of GIDs) {
+      try {
+        switch (action) {
+          case 'pause':
+            await aria2.pause(gid)
+            break
+          case 'resume':
+            await aria2.unpause(gid)
+            break
+          case 'remove':
+            const task = await aria2.tellStatus(gid)
+            if (task.status === 'removed') await aria2.removeDownloadResult(gid)
+            await aria2.remove(gid)
+        }
       } catch {}
     }
 

@@ -40,6 +40,7 @@ router
   .group(() => {
     router.get('/', [TransfersController, 'index']).as('page')
     router.post('/', [TransfersController, 'new']).as('new')
+    router.post('/action', [TransfersController, 'action']).as('action')
   })
   .use(middleware.auth())
   .as('transfers')
