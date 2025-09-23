@@ -27,3 +27,4 @@ yarn-error.log
 downloads
 
 files
+!inertia/pages/files

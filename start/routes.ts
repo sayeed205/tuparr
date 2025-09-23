@@ -13,6 +13,7 @@ import { middleware } from '#start/kernel'
 
 const AuthController = () => import('#controllers/auth_controller')
 const TransfersController = () => import('#controllers/transfers_controller')
+const FilesController = () => import('#controllers/files_controller')
 
 router.on('/').renderInertia('home').use(middleware.auth())
 
@@ -46,10 +47,25 @@ router
   .as('transfers')
   .prefix('transfers')
 
+/*
+|--------------------------------------------------------------------------
+| Transfers Controller
+|--------------------------------------------------------------------------
+*/
+router
+  .group(() => {
+    router.get('/', [FilesController, 'index']).as('root')
+    router.post('/delete', [FilesController, 'delete']).as('delete')
+    router.post('/rename', [FilesController, 'rename']).as('rename')
+    router.get('/*', [FilesController, 'index']).as('page')
+  })
+  .use(middleware.auth())
+  .as('files')
+  .prefix('files')
+
 router
   .group(() => {
     router.get('dashboard', ({ inertia }) => inertia.render('dashboard')).as('dashboard.page')
-    router.get('files', ({ inertia }) => inertia.render('files')).as('files.page')
   })
   .as('app')
   .use(middleware.auth())
