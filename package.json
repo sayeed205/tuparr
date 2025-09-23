@@ -67,7 +67,7 @@
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^4.0.0",
     "@dropb/diskinfo": "^3.0.0",
-    "@hitarashi/aria2": "npm:@jsr/hitarashi__aria2@^0.0.3",
+    "@hitarashi/aria2": "npm:@jsr/hitarashi__aria2@^0.1.0",
     "@inertiajs/react": "^2.1.7",
     "@izzyjs/route": "^2.1.7",
     "@radix-ui/react-avatar": "^1.1.10",
