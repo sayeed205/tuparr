@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import type { Authenticators } from '@adonisjs/auth/types'
+import { diskinfo } from '@dropb/diskinfo'
+import app from '@adonisjs/core/services/app'
 
 /**
  * Auth middleware is used authenticate HTTP requests and deny
@@ -20,6 +22,10 @@ export default class AuthMiddleware {
     } = {}
   ) {
     await ctx.auth.authenticateUsing(options.guards, { loginRoute: this.redirectTo })
+    const { size, avail, used, pcent } = await diskinfo(app.appRoot.pathname)
+    ctx.inertia.share({
+      storage: { size, avail, used, pcent },
+    })
     return next()
   }
 }

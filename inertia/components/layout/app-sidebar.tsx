@@ -12,6 +12,10 @@ import {
 } from '~/components/ui/sidebar'
 import useUser from '~/hooks/use-user'
 import type { NavGroup as NavGroupType } from '~/components/layout/types'
+import uesDisk from '~/hooks/use-disk'
+import { formatBytes } from '~/lib/utils'
+import { Progress } from '~/components/ui/progress'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 
 const sidebarLinks: NavGroupType[] = [
   {
@@ -39,7 +43,7 @@ const sidebarLinks: NavGroupType[] = [
 export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar()
   const user = useUser()
-
+  const diskInfo = uesDisk()
   const isCollapsed = state === 'collapsed'
 
   return (
@@ -107,6 +111,25 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
           <NavGroup key={p.title} {...p} />
         ))}
       </SidebarContent>
+      {!isCollapsed && diskInfo && (
+        <Tooltip>
+          <div className="flex gap-1 items-center px-3">
+            <TooltipTrigger asChild>
+              <Progress
+                value={((diskInfo.used ?? 0) / (diskInfo.size ?? 1)) * 100}
+                className="w-full h-2"
+              />
+            </TooltipTrigger>
+            <span className="text-xs">{diskInfo.pcent}%</span>
+          </div>
+
+          <TooltipContent className="text-sm flex flex-col px-5">
+            <span>Total: {formatBytes(diskInfo.size)}</span>
+            <span>Used: {formatBytes(diskInfo.used)}</span>
+            <span>Free: {formatBytes(diskInfo.avail)}</span>
+          </TooltipContent>
+        </Tooltip>
+      )}
       <SidebarFooter>{user && <NavUser />}</SidebarFooter>
     </Sidebar>
   )
