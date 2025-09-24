@@ -70,6 +70,7 @@
     "@hitarashi/aria2": "npm:@jsr/hitarashi__aria2@^0.1.0",
     "@inertiajs/react": "^2.1.7",
     "@izzyjs/route": "^2.1.7",
+    "@j3lte/ytdl-wrapper": "npm:@jsr/j3lte__ytdl-wrapper@^0.2.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-collapsible": "^1.1.12",
